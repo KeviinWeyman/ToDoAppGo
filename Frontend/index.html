@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List WebSocket</title>
+    <link rel="stylesheet" href="src/index.css">
+</head>
+<body>
+    <div class="container">
+        <h1>To-Do List</h1>
+
+        <!-- Formulario para agregar tareas -->
+        <input type="text" id="taskInput" placeholder="Nueva tarea" />
+        <button onclick="addTask()">Agregar tarea</button>
+        <p id="notification">⚠️ No puedes agregar una tarea vacía.</p> <!-- Notificación de error -->
+
+        <h2>Lista de tareas</h2>
+        <ul id="taskList"></ul>
+    </div>
+
+    <script>
+        const socket = new WebSocket("ws://localhost:8080/ws");
+
+        socket.onopen = () => {
+            console.log("Conexión WebSocket abierta");
+        };
+
+        socket.onmessage = (event) => {
+            const task = JSON.parse(event.data);
+            
+            if (task.action === "delete") {
+                removeTaskFromList(task.id);
+            } else {
+                updateTaskList(task);
+            }
+        };
+
+        function addTask() {
+            const taskInput = document.getElementById('taskInput');
+            const notification = document.getElementById('notification');
+
+            // Validar que el campo de texto no esté vacío
+            if (taskInput.value.trim() === "") {
+                notification.classList.add('show'); // Muestra la notificación
+                setTimeout(() => notification.classList.remove('show'), 2000); // Oculta después de 2 segundos
+                return;
+            }
+
+            const task = {
+                id: new Date().toISOString(),
+                content: taskInput.value,
+                completed: false,
+                action: 'add'
+            };
+
+            socket.send(JSON.stringify(task));
+            taskInput.value = ""; // Limpiar campo después de agregar tarea
+        }
+
+        function updateTaskList(task) {
+            let taskItem = document.getElementById(task.id);
+
+            if (!taskItem) {
+                taskItem = document.createElement('li');
+                taskItem.id = task.id;
+                document.getElementById('taskList').appendChild(taskItem);
+            }
+
+            taskItem.innerHTML = `
+                <span>${task.content}</span>
+                <button class="edit" onclick="editTask('${task.id}')">Editar</button>
+                <button onclick="deleteTask('${task.id}')">Eliminar</button>
+            `;
+        }
+
+        function removeTaskFromList(taskId) {
+            const taskItem = document.getElementById(taskId);
+            if (taskItem) {
+                taskItem.remove();
+            }
+        }
+
+        function deleteTask(taskId) {
+            const task = { id: taskId, action: 'delete' };
+            socket.send(JSON.stringify(task));
+        }
+
+        function editTask(taskId) {
+            const newContent = prompt("Editar tarea:");
+            if (newContent) {
+                const task = {
+                    id: taskId,
+                    content: newContent,
+                    action: 'edit'
+                };
+                socket.send(JSON.stringify(task));
+            }
+        }
+    </script>
+</body>
+</html>

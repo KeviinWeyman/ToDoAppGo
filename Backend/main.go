@@ -1,4 +1,4 @@
-package backend
+package main
 
 import (
 	"fmt"
@@ -7,13 +7,12 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/w", handleConnections) // Ruta para WebSocket
-	go handleMessages()
+	http.HandleFunc("/ws", handleConnections) // Ruta WebSocket
+	go handleMessages()                       // Goroutine para manejar mensajes en segundo plano
 
-	fmt.Println("Servidor escuchando en LocalHost:8080")
+	fmt.Println("Servidor escuchando en http://localhost:8080")
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
-		log.Fatal("Error al iniciar el servidor:", err)
-
+		log.Fatal("Error al iniciar servidor:", err)
 	}
 }

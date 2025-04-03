@@ -1,0 +1,134 @@
+/* Animación de entrada suave para las tareas */
+@keyframes fadeIn {
+  0% {
+      opacity: 0;
+      transform: translateY(20px);
+  }
+  100% {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+/* Animación de desvanecimiento para eliminar una tarea */
+@keyframes fadeOut {
+  0% {
+      opacity: 1;
+  }
+  100% {
+      opacity: 0;
+  }
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f7fa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  text-align: center;
+  animation: fadeIn 1s ease-out;
+}
+
+h1 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+#taskInput {
+  width: 80%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 80%;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+h2 {
+  font-size: 18px;
+  margin-top: 20px;
+  color: #333;
+}
+
+#taskList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f9f9f9;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease-out;
+}
+
+li button {
+  margin-left: 5px;
+  background-color: #f44336;
+  transition: background-color 0.3s;
+}
+
+li button.edit {
+  background-color: #ffa500;
+}
+
+li button:hover {
+  background-color: #c1351d;
+}
+
+li button.edit:hover {
+  background-color: #e6890e;
+}
+
+/* Animación de desaparición de las tareas al eliminar */
+li.removed {
+  animation: fadeOut 0.5s forwards;
+}
+
+/* ✅ Nueva sección: Notificación de error al agregar tarea vacía */
+#notification {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+  display: none; /* Oculto por defecto */
+}
+
+#notification.show {
+  display: block;
+  animation: fadeIn 0.5s ease-out;
+}
